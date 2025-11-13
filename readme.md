@@ -7,69 +7,92 @@
 
 ---
 
+# KMP Algorithm
 
-##
-### 1. **LPS Array Construction**
 
-The LPS array stores, for each index of the pattern, the length of the longest proper prefix that is also a suffix.
-This allows the search phase to skip unnecessary character checks after a mismatch.
 
-### 2. **Pattern Search**
+## 1. Summary of the Implementation
 
-The algorithm scans the text only once.
-When characters match, both indices move forward.
-When a mismatch occurs, the algorithm uses the LPS array to determine how far the pattern should shift, instead of restarting from the beginning.
+The implementation consists of two main components:
+
+### **1. LPS Array Construction**
+
+A function computes the **Longest Prefix Suffix (LPS)** array for the pattern.
+For each index in the pattern, the LPS array stores the length of the longest prefix that is also a suffix.
+This preprocessing ensures that during the search phase the algorithm never re-checks characters unnecessarily.
+
+### **2. KMP Search Function**
+
+The search method scans the text and compares it with the pattern:
+
+* When characters match, both pointers move forward.
+* When a mismatch occurs, the pattern pointer jumps using the LPS value instead of resetting to zero.
+* When the full pattern is matched, the starting index of the match is recorded.
+
 
 ---
 
-## Time and Space Complexity
+## 2. Testing Results
 
-### **Time Complexity**
+The implementation was tested on three datasets: short, medium, and long strings.
+Below are the test inputs used:
 
-* **Building the LPS array:** O(M)
-* **Searching in the text:** O(N)
-
-Where:
-
-* *N* = length of the text
-* *M* = length of the pattern
-
-**Total Time Complexity:**
-`O(N+M)`
-
-### **Space Complexity**
-
-The only additional data structure is the LPS array of size *M*.
-
-**Total Space Complexity:**
-`O(M)`
-
----
-
-## Test Data
-
-
-### **1. Short string**
+### **Test Case 1 - Short String**
 
 ```
 Text:    AAAAABABAAAABAA
 Pattern: ABA
 ```
 
-### **2. Middle string**
+**Expected behavior:** Matches occur at all positions where “ABA” appears within overlapping sequences.
+
+### **Test Case 2 - Middle String**
 
 ```
 Text:    ABCXABCABHHYABCABCX
 Pattern: ABCX
 ```
 
-### **3. Long string**
+**Expected behavior:** First and last occurrences of "ABCX" should be detected.
+
+### **Test Case 3 - Long String**
 
 ```
 Text:    AAAAAAABBBBAAAAAAAAAAAAAAABAAAAAABBAAAA
 Pattern: AAAAB
 ```
 
+**Expected behavior:** Multiple matches inside long repeated sequences of 'A', with correct skipping behavior using LPS.
+
+These test cases confirm that the algorithm:
+
+* Correctly identifies all valid pattern occurrences
+* Handles repeated characters efficiently
+* Properly skips using the LPS table instead of re-checking characters
 
 ---
+
+## 3. Time and Space Complexity Analysis
+
+### **Time Complexity**
+
+* **LPS construction:** O(M)
+* **Pattern search:** O(N)
+
+Where
+*N* = length of the text,
+*M* = length of the pattern.
+
+Because the algorithm never revisits text characters unnecessarily, the total running time is:
+
+**O(N+M)**
+
+This is significantly faster than the naive algorithm, which can degrade to O(N*M).
+
+### **Space Complexity**
+
+The only auxiliary structure used is the LPS array, which has size *M*.
+
+**Total space complexity: O(M)**
+
 
